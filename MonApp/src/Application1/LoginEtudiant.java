@@ -15,6 +15,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -168,6 +169,22 @@ public class LoginEtudiant extends Application {
 			COVb.setSpacing(10);
 			CORoot.setCenter(COVb);
 			
+			Stage EspaceEtudiantStage =new Stage();
+			EspaceEtudiantStage.setTitle("ElectroBib");
+			BorderPane EspEtdRoot =new BorderPane();
+			VBox EspEtdVbox =new VBox();
+			HBox EspEtdHbox =new HBox();
+			EspEtdHbox.setPadding(new Insets(15));
+			Scene EspEtdScene =new Scene(EspEtdRoot,700,700);
+			EspEtdScene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+			EspaceEtudiantStage.setScene(EspEtdScene);
+			Hyperlink DeconHl =new Hyperlink("Déconnexion");
+			EspEtdHbox.getChildren().addAll(Plogo,lab1,DeconHl);
+			EspEtdRoot.setTop(EspEtdHbox);
+			Label félicLab =new Label();
+			
+			
+			
 			
 			
 			
@@ -280,16 +297,29 @@ public class LoginEtudiant extends Application {
 					e2.printStackTrace();
 				}
 				String RqCon ="select * from electro_bib_data_base.utilisateur where username='"+tf1.getText()+"'";
+				
 	        ResultSet ResCon=null;
+	        ResultSet ResFil=null;
+	        ResultSet ResMod=null;
 				try {
 					ResCon =statement2.executeQuery(RqCon);
+					
+					
+					
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 				try {
 					if(ResCon.next()) {
-						
+						if(ResCon.getString("passwd").equalsIgnoreCase(tf2.getText()));{
+					        String RqFil="select * from electro_bib_data_base.etudiant where CNE='"+ResCon.getString("CNE")+"'";
+					        ResFil=statement2.executeQuery(RqFil);
+					        String RqMod="select * from electro_bib_data_base.module where filiere='"+ResFil.getString("filiere")+"' and Etablissement='"+ResCon.getString("Etablissement")+"'";
+					        ResMod=statement2.executeQuery(RqMod);
+					        int j =0;
+					        
+						}
 					}
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
@@ -349,3 +379,4 @@ public class LoginEtudiant extends Application {
 	
 	
 }
+
