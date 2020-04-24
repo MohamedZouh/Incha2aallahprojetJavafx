@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -160,11 +161,11 @@ public class LoginEtudiant extends Application {
 			Label labelNomUtilisateur =new Label("Entrer le nom d'utilisateur");
 			TextField TfNU =new TextField();
 			Label labelpasswd =new Label("entrer le password");
-			TextField TfPasswd =new TextField();
+			PasswordField TfPasswd =new PasswordField();
 			TfPasswd.setMaxWidth(200);
 			TfNU.setMaxWidth(200);
 			Button BtVd =new Button("valider");
-			COVb.getChildren().addAll(labelNomEtudiant,Information,labelTache,labelNomUtilisateur,TfNU,labelpasswd,TfPasswd);
+			COVb.getChildren().addAll(labelNomEtudiant,Information,labelTache,labelNomUtilisateur,TfNU,labelpasswd,TfPasswd,BtVd);
 			COVb.setPadding(new Insets(100));
 			COVb.setSpacing(10);
 			CORoot.setCenter(COVb);
@@ -182,7 +183,10 @@ public class LoginEtudiant extends Application {
 			EspEtdHbox.getChildren().addAll(Plogo,lab1,DeconHl);
 			EspEtdRoot.setTop(EspEtdHbox);
 			Label ModLab =new Label("ci dessous la liste de modules de votre filière choisissez n'importe lequel pour accéder aux ressources disponible");
-			
+			EspEtdVbox.getChildren().addAll(ModLab);
+			EspEtdVbox.setPadding(new Insets(100));
+			EspEtdVbox.setSpacing(10);
+			EspEtdRoot.setCenter(EspEtdVbox);
 			
 			
 			
@@ -205,27 +209,23 @@ public class LoginEtudiant extends Application {
 			
 			
 			BtVd.setOnAction(e->{
-				String RqInsertion="insert into electro_bib_data_base.utilisateur values("+TfNU.getText()+","+TfPasswd.getText()+")";
+				final String Cne="'"+SUtf3.getText().trim()+"'";
+				String RqInsertion="insert into electro_bib_data_base.utilisateur values("+Cne+","+TfNU.getText()+","+TfPasswd.getText()+")";
 				try {
 					ResultSet res1= statement.executeQuery(RqInsertion);
+					COStage.hide();
+					EspaceEtudiantStage.show();
 				} catch (SQLException e1) {
 					e1.printStackTrace();
 				}
 			});
 			
 		
-			 
-			 
-	
-             
-  
-			
-				 
-				
-					
+			 	
 					
             SUbt1.setOnAction(e->{
-	             String rq ="select * from electro_bib_data_base.etudiant where cne='"+ SUtf3.getText().trim()+"'";
+            	 final String Cne="'"+SUtf3.getText().trim()+"'";
+	             String rq ="select * from electro_bib_data_base.etudiant where cne="+Cne ;
 				 ResultSet res = null;
 				try {
 					res = statement.executeQuery(rq);
@@ -247,11 +247,19 @@ public class LoginEtudiant extends Application {
 								DescRes.setText("Vueillez s'assureez des informations entrés");
 							}
 						}
+						else {
+							DescRes.setText("Vueillez s'assureez des informations entrés");
+						}
 					} catch (SQLException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
             });
+            
+            
+            
+            
+            
             
             
             
