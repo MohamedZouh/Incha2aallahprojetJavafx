@@ -120,6 +120,7 @@ public class LoginEtudiant extends Application {
 			SignUpHBox.getChildren().addAll(Plogo,lab1,SUHl);
 			SignUpRoot.setTop(SignUpHBox);
 			Label SUlab =new Label("Vueillez renseigner les informations suivantes pour qu'on puisse vous identifier");
+			Label DescRes =new Label();
 			Label fac =new Label("Faculté/Ecole");
 			ComboBox cb2 =new ComboBox();
 			cb2.getItems().addAll("FST");
@@ -134,7 +135,7 @@ public class LoginEtudiant extends Application {
 			SUtf3.setMaxWidth(200);
 			Button SUbt1 =new Button("valider");
 			bt1.setPadding(new Insets(10));
-			SignUpVb.getChildren().addAll(SUlab,fac,cb2,nom,SUtf1,prenom,SUtf2,cne,SUtf3,SUbt1);
+			SignUpVb.getChildren().addAll(SUlab,DescRes,fac,cb2,nom,SUtf1,prenom,SUtf2,cne,SUtf3,SUbt1);
 			SignUpVb.setPadding(new Insets(100));
 			SignUpVb.setSpacing(10);
 			SignUpRoot.setCenter(SignUpVb);
@@ -196,11 +197,24 @@ public class LoginEtudiant extends Application {
 			
 			
 			BtVd.setOnAction(e->{
+				Connection con1 = null;
+				Statement statement1= null;
+				try {
+					con1 = DriverManager.getConnection("jdbc:mysql://localhost:330/electro_bib_data_base?zeroDateTimeBehavior=CONVERT_TO_NULL&serverTimezone=UTC", "root", "MP*NASAINCHA2AALLAH");
+				} catch (SQLException e3) {
+					// TODO Auto-generated catch block
+					e3.printStackTrace();
+				}
 				
-				
+				try {
+					statement1=con1.createStatement();
+				} catch (SQLException e2) {
+                
+					e2.printStackTrace();
+				}
 				String RqInsertion="insert into electro_bib_data_base.utilisateur values("+TfNU.getText()+","+TfPasswd.getText()+")";
 				try {
-					ResultSet res1= statement.executeQuery(RqInsertion);
+					ResultSet res1= statement1.executeQuery(RqInsertion);
 				} catch (SQLException e1) {
 					e1.printStackTrace();
 				}
@@ -218,7 +232,7 @@ public class LoginEtudiant extends Application {
 	
              System.out.println("Connexion établie");
   
-			 try {
+			
 				 
 				 String rq ="select * from electro_bib_data_base.etudiant where cne='"+ SUtf3.getText().trim()+"'";
 				 ResultSet res = statement.executeQuery(rq);
@@ -233,18 +247,55 @@ public class LoginEtudiant extends Application {
 								SignUpStage.hide();
 								labelNomEtudiant.setText("L'étudiant "+res.getString("NomEtudiant")+" "+res.getString("PrenomEtudiant")+" de la filière "+res.getString("Filiere")+" "+res.getString("Etablissement"));
 							}
+							else {
+								DescRes.setText("Vueillez s'assureez des informations entrés");
+							}
 						}
 					} catch (SQLException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
             });
-	        }    
-		 catch (SQLException e1) {
+            
+            
+            
+	        
+				
+				
+			
+			bt.setOnAction(e->{
+				Connection con2 = null;
+				Statement statement2= null;
+				try {
+					con2 = DriverManager.getConnection("jdbc:mysql://localhost:330/electro_bib_data_base?zeroDateTimeBehavior=CONVERT_TO_NULL&serverTimezone=UTC", "root", "MP*NASAINCHA2AALLAH");
+				} catch (SQLException e3) {
+					// TODO Auto-generated catch block
+					e3.printStackTrace();
+				}
+				
+				try {
+					statement2=con2.createStatement();
+				} catch (SQLException e2) {
+                
+					e2.printStackTrace();
+				}
+				String RqCon ="select * from electro_bib_data_base.utilisateur where username='"+tf1.getText()+"'";
+	        ResultSet ResCon=null;
+				try {
+					ResCon =statement2.executeQuery(RqCon);
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-			
-					
+				try {
+					if(ResCon.next()) {
+						
+					}
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			});		
 					
 			hl1.setOnAction(e->{
 				LogInStage.hide();
