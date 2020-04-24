@@ -3,6 +3,7 @@ package Application1;
 import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -25,6 +26,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import DBConnection.DBHandler;
 
 
 
@@ -98,13 +100,14 @@ public class LoginEtudiant extends Application {
 			Hyperlink hl1= new Hyperlink("Créer un compte");
 			LogInHBox1.getChildren().addAll(Plogo,lab1,hl1);
 			LogInRoot.setTop(LogInHBox1);
+			Label InfLab =new Label();
 			Label LogInlab =new Label("entrer votre CNE");
 			TextField tf1 =new TextField();
 			Label PassWdLab =new Label("entrer votre mot de passe");
 			PasswordField tf2 =new PasswordField();
 			Button bt =new Button("se connecter");
 			bt1.setPadding(new Insets(10));
-			LogInVb.getChildren().addAll(LogInlab,tf1,PassWdLab,tf2,bt);
+			LogInVb.getChildren().addAll(InfLab,LogInlab,tf1,PassWdLab,tf2,bt);
 			LogInVb.setPadding(new Insets(200));
 			LogInVb.setSpacing(50);
 			LogInRoot.setCenter(LogInVb);
@@ -179,8 +182,10 @@ public class LoginEtudiant extends Application {
 			Hyperlink DeconHl =new Hyperlink("Déconnexion");
 			EspEtdHbox.getChildren().addAll(Plogo,lab1,DeconHl);
 			EspEtdRoot.setTop(EspEtdHbox);
-			Label ModLab =new Label("ci dessous la liste de modules de votre filière choisissez n'importe lequel pour accéder aux ressources disponible");
-			EspEtdVbox.getChildren().addAll(ModLab);
+			Label EtatLab =new Label("Connexion réussite");
+			Hyperlink EspEtHl =new Hyperlink("Passer à votre espace");
+			Hyperlink EspFlHl =new Hyperlink();
+			EspEtdVbox.getChildren().addAll(EtatLab,EspEtHl,EspFlHl);
 			EspEtdVbox.setPadding(new Insets(100));
 			EspEtdVbox.setSpacing(10);
 			EspEtdRoot.setCenter(EspEtdVbox);
@@ -190,6 +195,10 @@ public class LoginEtudiant extends Application {
 			
 			
 			primaryStage.show();
+			
+			
+			
+			
 			
 			
             	try {
@@ -207,14 +216,34 @@ public class LoginEtudiant extends Application {
 			
 			BtVd.setOnAction(e->{
 				final String Cne="'"+SUtf3.getText().trim()+"'";
-				String RqInsertion="insert into electro_bib_data_base.utilisateur values("+Cne+","+TfPasswd.getText()+")";
+				Connection connection = null;
+				DBHandler handler;
+				handler=new DBHandler();
+				String insert ="insert into electro_bib_data_base.utilisateur(CNE,passwd) values(?,?)";
 				try {
-					ResultSet res1= statement.executeQuery(RqInsertion);
-					COStage.hide();
-					EspaceEtudiantStage.show();
-				} catch (SQLException e1) {
-					e1.printStackTrace();
+					connection =handler.getConnection();
+				} catch (ClassNotFoundException | SQLException e2) {
+
+					e2.printStackTrace();
 				}
+				PreparedStatement pst = null;
+				try {
+					pst = connection.prepareStatement(insert);
+				} catch (SQLException e2) {
+
+					e2.printStackTrace();
+				}
+				try {
+					pst.setString(1, Cne);
+					pst.setString(2, TfPasswd.getText());
+					pst.executeUpdate();
+				} catch (SQLException e2) {
+
+					e2.printStackTrace();
+				}
+				
+				COStage.hide();
+				EspaceEtudiantStage.show();
 			});
 			
 		
@@ -227,7 +256,6 @@ public class LoginEtudiant extends Application {
 				try {
 					res = statement.executeQuery(rq);
 				} catch (SQLException e2) {
-					// TODO Auto-generated catch block
 					e2.printStackTrace();
 				}
 				
@@ -248,50 +276,48 @@ public class LoginEtudiant extends Application {
 							DescRes.setText("Vueillez s'assureez des informations entrés");
 						}
 					} catch (SQLException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
             });
             
             
-            
-            
-           
-            bt.setOnAction(e->{
-            	
-            });
-            
-            
-	        
-				
-				
+    
 			
 			bt.setOnAction(e->{
-				
-				String RqCon ="select * from electro_bib_data_base.utilisateur where username='"+tf1.getText()+"'";
+				String Cne="'"+tf1.getText().trim()+"'";
+				String RqFil="select * from electro_bib_data_base.etudiant where CNE="+Cne;
+				String RqCon ="select * from electro_bib_data_base.utilisateur where CNE="+Cne;
 				
 	        ResultSet ResCon=null;
 	     
 				try {
+					ResultSet ResFil =statement.executeQuery(RqFil);
 					ResCon =statement.executeQuery(RqCon);
-					
-					
-					
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				try {
-					if(ResCon.next()) {
-						if(ResCon.getString("passwd").equalsIgnoreCase(tf2.getText())){
-					        
+					if(ResFil.next()) {
+						if(!ResCon.next()) {
+							InfLab.setText("vueillez activer votre compte ");
+						}
+						else  {
+							if(ResCon.getString("passwd").equalsIgnoreCase("'"+tf2.getText().trim()+"'")){
+								EspFlHl.setText("Voir les ressources disponible pour la filière "+ResFil.getString("Filiere"));
+								LogInStage.hide();
+								EspaceEtudiantStage.show();
+							}
+							else {
+								InfLab.setText("mot de passe incorecte");	
+							}
 						}
 					}
+					else {
+						InfLab.setText("vueillez s'assurer des informations entrés");
+					}	
 				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-			});		
+			});	
+			
+			
+			
 					
 			hl1.setOnAction(e->{
 				LogInStage.hide();
