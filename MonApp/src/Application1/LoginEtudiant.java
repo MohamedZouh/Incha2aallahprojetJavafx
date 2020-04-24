@@ -98,12 +98,13 @@ public class LoginEtudiant extends Application {
 			Hyperlink hl1= new Hyperlink("Créer un compte");
 			LogInHBox1.getChildren().addAll(Plogo,lab1,hl1);
 			LogInRoot.setTop(LogInHBox1);
-			Label LogInlab =new Label("Connetez vous à votre compte");
-			TextField tf1 =new TextField("Nom utilisateur");
+			Label LogInlab =new Label("entrer votre CNE");
+			TextField tf1 =new TextField();
+			Label PassWdLab =new Label("entrer votre mot de passe");
 			PasswordField tf2 =new PasswordField();
 			Button bt =new Button("se connecter");
 			bt1.setPadding(new Insets(10));
-			LogInVb.getChildren().addAll(LogInlab,tf1,tf2,bt);
+			LogInVb.getChildren().addAll(LogInlab,tf1,PassWdLab,tf2,bt);
 			LogInVb.setPadding(new Insets(200));
 			LogInVb.setSpacing(50);
 			LogInRoot.setCenter(LogInVb);
@@ -157,15 +158,11 @@ public class LoginEtudiant extends Application {
 			CORoot.setTop(COHBox);
 			Label labelNomEtudiant =new Label();
 			Label Information =new Label("Bienvenu vous êtes sur le point de terminer l'activationde votre compte");
-			Label labelTache =new Label("veillez renseigner les informations qui restent");
-			Label labelNomUtilisateur =new Label("Entrer le nom d'utilisateur");
-			TextField TfNU =new TextField();
-			Label labelpasswd =new Label("entrer le password");
+			Label labelTache =new Label("veillez vueillez donner un mot de passe pour les connexions ultérieurs");
 			PasswordField TfPasswd =new PasswordField();
 			TfPasswd.setMaxWidth(200);
-			TfNU.setMaxWidth(200);
 			Button BtVd =new Button("valider");
-			COVb.getChildren().addAll(labelNomEtudiant,Information,labelTache,labelNomUtilisateur,TfNU,labelpasswd,TfPasswd,BtVd);
+			COVb.getChildren().addAll(labelNomEtudiant,Information,labelTache,TfPasswd,BtVd);
 			COVb.setPadding(new Insets(100));
 			COVb.setSpacing(10);
 			CORoot.setCenter(COVb);
@@ -210,7 +207,7 @@ public class LoginEtudiant extends Application {
 			
 			BtVd.setOnAction(e->{
 				final String Cne="'"+SUtf3.getText().trim()+"'";
-				String RqInsertion="insert into electro_bib_data_base.utilisateur values("+Cne+","+TfNU.getText()+","+TfPasswd.getText()+")";
+				String RqInsertion="insert into electro_bib_data_base.utilisateur values("+Cne+","+TfPasswd.getText()+")";
 				try {
 					ResultSet res1= statement.executeQuery(RqInsertion);
 					COStage.hide();
@@ -259,8 +256,10 @@ public class LoginEtudiant extends Application {
             
             
             
-            
-            
+           
+            bt.setOnAction(e->{
+            	
+            });
             
             
 	        
