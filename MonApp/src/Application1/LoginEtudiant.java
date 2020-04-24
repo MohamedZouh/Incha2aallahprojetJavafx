@@ -181,7 +181,7 @@ public class LoginEtudiant extends Application {
 			Hyperlink DeconHl =new Hyperlink("Déconnexion");
 			EspEtdHbox.getChildren().addAll(Plogo,lab1,DeconHl);
 			EspEtdRoot.setTop(EspEtdHbox);
-			Label félicLab =new Label();
+			Label ModLab =new Label("ci dessous la liste de modules de votre filière choisissez n'importe lequel pour accéder aux ressources disponible");
 			
 			
 			
@@ -191,47 +191,23 @@ public class LoginEtudiant extends Application {
 			primaryStage.show();
 			
 			
-			Statement statement = null;
-			Connection con = null;
+            	try {
+					Class.forName("com.mysql.cj.jdbc.Driver");
+					System.out.println("Connexion établie");
+				} catch (ClassNotFoundException e2) {
+					
+					e2.printStackTrace();
+				}
 			
-			
-			try {
-				con = DriverManager.getConnection("jdbc:mysql://localhost:330/electro_bib_data_base?zeroDateTimeBehavior=CONVERT_TO_NULL&serverTimezone=UTC", "root", "MP*NASAINCHA2AALLAH");
-			} catch (SQLException e2) {
-				
-				e2.printStackTrace();
-			}
+            	final Connection con = DriverManager.getConnection("jdbc:mysql://localhost:330/electro_bib_data_base?zeroDateTimeBehavior=CONVERT_TO_NULL&serverTimezone=UTC", "root", "MP*NASAINCHA2AALLAH");
+            	final Statement statement =  con.createStatement();
 
 			
 			
-			try {
-					statement = con.createStatement();
-				} catch (SQLException e1) {
-					
-					e1.printStackTrace();
-				}
-			
-			
-			
 			BtVd.setOnAction(e->{
-				Connection con1 = null;
-				Statement statement1= null;
-				try {
-					con1 = DriverManager.getConnection("jdbc:mysql://localhost:330/electro_bib_data_base?zeroDateTimeBehavior=CONVERT_TO_NULL&serverTimezone=UTC", "root", "MP*NASAINCHA2AALLAH");
-				} catch (SQLException e3) {
-					// TODO Auto-generated catch block
-					e3.printStackTrace();
-				}
-				
-				try {
-					statement1=con1.createStatement();
-				} catch (SQLException e2) {
-                
-					e2.printStackTrace();
-				}
 				String RqInsertion="insert into electro_bib_data_base.utilisateur values("+TfNU.getText()+","+TfPasswd.getText()+")";
 				try {
-					ResultSet res1= statement1.executeQuery(RqInsertion);
+					ResultSet res1= statement.executeQuery(RqInsertion);
 				} catch (SQLException e1) {
 					e1.printStackTrace();
 				}
@@ -240,23 +216,26 @@ public class LoginEtudiant extends Application {
 		
 			 
 			 
-            	try {
-					Class.forName("com.mysql.cj.jdbc.Driver");
-				} catch (ClassNotFoundException e2) {
-					
-					e2.printStackTrace();
-				}
 	
-             System.out.println("Connexion établie");
+             
   
 			
 				 
-				 String rq ="select * from electro_bib_data_base.etudiant where cne='"+ SUtf3.getText().trim()+"'";
-				 ResultSet res = statement.executeQuery(rq);
+				
 					
 					
             SUbt1.setOnAction(e->{
-	            
+	             String rq ="select * from electro_bib_data_base.etudiant where cne='"+ SUtf3.getText().trim()+"'";
+				 ResultSet res = null;
+				try {
+					res = statement.executeQuery(rq);
+				} catch (SQLException e2) {
+					// TODO Auto-generated catch block
+					e2.printStackTrace();
+				}
+				
+
+				
 					try {
 						if(res.next()) {
 							if(res.getString("NomEtudiant").equalsIgnoreCase(SUtf1.getText()) && res.getString("PrenomEtudiant").equalsIgnoreCase(SUtf2.getText()) && res.getString("Etablissement").equalsIgnoreCase((String) cb2.getValue())){
@@ -281,28 +260,13 @@ public class LoginEtudiant extends Application {
 				
 			
 			bt.setOnAction(e->{
-				Connection con2 = null;
-				Statement statement2= null;
-				try {
-					con2 = DriverManager.getConnection("jdbc:mysql://localhost:330/electro_bib_data_base?zeroDateTimeBehavior=CONVERT_TO_NULL&serverTimezone=UTC", "root", "MP*NASAINCHA2AALLAH");
-				} catch (SQLException e3) {
-					// TODO Auto-generated catch block
-					e3.printStackTrace();
-				}
 				
-				try {
-					statement2=con2.createStatement();
-				} catch (SQLException e2) {
-                
-					e2.printStackTrace();
-				}
 				String RqCon ="select * from electro_bib_data_base.utilisateur where username='"+tf1.getText()+"'";
 				
 	        ResultSet ResCon=null;
-	        ResultSet ResFil=null;
-	        ResultSet ResMod=null;
+	     
 				try {
-					ResCon =statement2.executeQuery(RqCon);
+					ResCon =statement.executeQuery(RqCon);
 					
 					
 					
@@ -312,12 +276,7 @@ public class LoginEtudiant extends Application {
 				}
 				try {
 					if(ResCon.next()) {
-						if(ResCon.getString("passwd").equalsIgnoreCase(tf2.getText()));{
-					        String RqFil="select * from electro_bib_data_base.etudiant where CNE='"+ResCon.getString("CNE")+"'";
-					        ResFil=statement2.executeQuery(RqFil);
-					        String RqMod="select * from electro_bib_data_base.module where filiere='"+ResFil.getString("filiere")+"' and Etablissement='"+ResCon.getString("Etablissement")+"'";
-					        ResMod=statement2.executeQuery(RqMod);
-					        int j =0;
+						if(ResCon.getString("passwd").equalsIgnoreCase(tf2.getText())){
 					        
 						}
 					}
